@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexTutor — AI Tutor SPM Malaysia</title>
+<meta name="description" content="Tutor terbaik kamu. 24/7. Dalam poket kamu. AI Tutor SPM Malaysia untuk pelajar Tingkatan 4 & 5.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07090f;
+  --bg2: #0d1117;
+  --purple: #7c3aed;
+  --purple-light: #a78bfa;
+  --purple-dim: rgba(124,58,237,0.12);
+  --teal: #06b6d4;
+  --gold: #f59e0b;
+  --text: #f1f0ff;
+  --text2: #8b8aa0;
+  --text3: #4a4860;
+  --border: rgba(124,58,237,0.18);
+  --card: rgba(255,255,255,0.03);
+  --card-hover: rgba(124,58,237,0.08);
+  --radius: 20px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* ── GLOW ORBS ── */
+.orb {
+  position: fixed; border-radius: 50%;
+  filter: blur(80px); pointer-events: none; z-index: 0;
+}
+.orb-1 { width: 600px; height: 600px; background: rgba(124,58,237,0.12); top: -200px; right: -200px; }
+.orb-2 { width: 400px; height: 400px; background: rgba(6,182,212,0.07); bottom: 200px; left: -100px; }
+.orb-3 { width: 300px; height: 300px; background: rgba(245,158,11,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 20px;
+  background: rgba(7,9,15,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #1e1b4b, #7c3aed);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.nav-logo-text { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; }
+.nav-logo-text span { color: var(--purple-light); }
+.nav-cta {
+  background: var(--purple);
+  color: #fff;
+  font-size: 13px; font-weight: 600;
+  padding: 8px 18px; border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid rgba(124,58,237,0.5);
+}
+.nav-cta:hover { background: #6d28d9; transform: translateY(-1px); }
+
+/* ── SECTIONS ── */
+section { position: relative; z-index: 1; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 120px 20px 80px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  color: var(--purple-light);
+  margin-bottom: 28px;
+  animation: fadeDown 0.6s ease both;
+}
+.badge-dot {
+  width: 6px; height: 6px; background: #4ade80;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(38px, 8vw, 72px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  animation: fadeDown 0.7s ease 0.1s both;
+}
+.hero-title .highlight {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed, #06b6d4);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(15px, 2.5vw, 19px);
+  color: var(--text2);
+  max-width: 540px;
+  margin: 0 auto 40px;
+  font-weight: 300;
+  animation: fadeDown 0.7s ease 0.2s both;
+}
+
+.hero-actions {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; margin-bottom: 60px;
+  animation: fadeDown 0.7s ease 0.3s both;
+}
+@media(min-width:480px) {
+  .hero-actions { flex-direction: row; }
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  font-size: 15px; font-weight: 700;
+  padding: 14px 28px; border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.25s;
+  box-shadow: 0 4px 24px rgba(124,58,237,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(124,58,237,0.55);
+}
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px; font-weight: 500;
+  padding: 14px 24px; border-radius: 14px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: all 0.25s;
+}
+.btn-secondary:hover {
+  background: var(--card-hover);
+  border-color: var(--purple);
+}
+
+.hero-trust {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px; color: var(--text3);
+  animation: fadeDown 0.7s ease 0.4s both;
+}
+.trust-avatars {
+  display: flex;
+}
+.trust-av {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  border: 2px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  margin-left: -8px;
+}
+.trust-av:first-child { margin-left: 0; }
+
+/* ── PHONE MOCKUP ── */
+.hero-mockup {
+  position: relative;
+  margin: 0 auto;
+  max-width: 280px;
+  animation: float 4s ease-in-out infinite, fadeDown 0.8s ease 0.5s both;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.phone-frame {
+  background: linear-gradient(145deg, #1a1f2e, #0d1117);
+  border-radius: 36px;
+  padding: 12px;
+  border: 1px solid rgba(124,58,237,0.25);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 60px rgba(124,58,237,0.15);
+}
+.phone-screen {
+  background: #080c10;
+  border-radius: 28px;
+  overflow: hidden;
+  aspect-ratio: 9/16;
+  display: flex; flex-direction: column;
+}
+.phone-header {
+  background: linear-gradient(135deg, #1e1b4b, #0d1117);
+  padding: 16px 14px 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.phone-header-logo {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.phone-header-text { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; }
+.phone-header-text span { color: var(--purple-light); }
+
+.phone-body { flex: 1; padding: 12px; overflow: hidden; }
+
+.chat-msg {
+  margin-bottom: 8px;
+  animation: msgIn 0.4s ease both;
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.chat-msg.ai .bubble {
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 14px 14px 14px 4px;
+  padding: 8px 10px;
+  font-size: 9px; color: var(--text); line-height: 1.5;
+  max-width: 85%;
+}
+.chat-msg.user { display: flex; justify-content: flex-end; }
+.chat-msg.user .bubble {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  border-radius: 14px 14px 4px 14px;
+  padding: 8px 10px;
+  font-size: 9px; color: #fff; line-height: 1.5;
+  max-width: 75%;
+}
+.ai-label {
+  font-size: 8px; color: var(--purple-light); font-weight: 600;
+  margin-bottom: 3px; display: block;
+}
+
+.typing-dots {
+  display: inline-flex; gap: 3px; align-items: center;
+  padding: 8px 12px;
+  background: rgba(124,58,237,0.12);
+  border-radius: 14px 14px 14px 4px;
+}
+.typing-dots span {
+  width: 4px; height: 4px; background: var(--purple-light);
+  border-radius: 50%;
+  animation: dot-bounce 1.2s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  padding: 40px 20px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stats-inner {
+  max-width: 900px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 24px; text-align: center;
+}
+@media(min-width:600px) {
+  .stats-inner { grid-template-columns: repeat(4, 1fr); }
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px; font-weight: 800;
+  color: var(--purple-light);
+}
+.stat-lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* ── FEATURES ── */
+.features { padding: 100px 20px; }
+.section-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--purple-light);
+  text-transform: uppercase; letter-spacing: 3px;
+  margin-bottom: 12px; text-align: center;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 800; text-align: center;
+  line-height: 1.15; margin-bottom: 16px;
+}
+.section-sub {
+  text-align: center; color: var(--text2);
+  font-size: 15px; max-width: 500px;
+  margin: 0 auto 60px;
+}
+
+.features-grid {
+  max-width: 1000px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media(min-width:600px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(min-width:900px) {
+  .features-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.feat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all 0.25s;
+  position: relative; overflow: hidden;
+}
+.feat-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--purple-dim), transparent);
+  opacity: 0; transition: opacity 0.25s;
+}
+.feat-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-3px); }
+.feat-card:hover::before { opacity: 1; }
+
+.feat-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(124,58,237,0.05));
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+.feat-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.feat-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* ── HOW IT WORKS ── */
+.howitworks { padding: 80px 20px; background: rgba(124,58,237,0.03); }
+
+.steps {
+  max-width: 800px; margin: 0 auto;
+  display: grid; gap: 24px;
+}
+@media(min-width:700px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+
+.step {
+  text-align: center; padding: 32px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  position: relative;
+}
+.step-num {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+.step-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.step-desc { font-size: 13px; color: var(--text2); }
+
+/* ── SUBJECTS ── */
+.subjects { padding: 80px 20px; }
+
+.subj-grid {
+  max-width: 800px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media(min-width:600px) { .subj-grid { grid-template-columns: repeat(5, 1fr); } }
+
+.subj-chip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  transition: all 0.2s;
+}
+.subj-chip:hover { border-color: var(--purple); background: var(--card-hover); }
+.subj-emoji { font-size: 22px; display: block; margin-bottom: 6px; }
+.subj-name { font-size: 10px; font-weight: 600; color: var(--text2); }
+
+/* ── PRICING ── */
+.pricing { padding: 100px 20px; }
+
+.pricing-grid {
+  max-width: 900px; margin: 0 auto;
+  display: grid; gap: 16px;
+}
+@media(min-width:700px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.price-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  position: relative;
+  transition: all 0.25s;
+}
+.price-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-3px); }
+.price-card.popular {
+  background: linear-gradient(145deg, rgba(124,58,237,0.15), rgba(79,70,229,0.08));
+  border-color: rgba(124,58,237,0.5);
+  box-shadow: 0 0 40px rgba(124,58,237,0.15);
+}
+.popular-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff; font-size: 10px; font-weight: 700;
+  padding: 4px 16px; border-radius: 20px;
+  white-space: nowrap;
+}
+.price-plan { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.price-amount {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px; font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.price-amount span { font-size: 14px; color: var(--text2); font-weight: 400; }
+.price-desc { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+
+.price-features { list-style: none; margin-bottom: 24px; }
+.price-features li {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--text2);
+  margin-bottom: 10px;
+}
+.price-features li::before { content: '✓'; color: #4ade80; flex-shrink: 0; font-weight: 700; }
+.price-features li.muted::before { content: '—'; color: var(--text3); }
+.price-features li.muted { color: var(--text3); }
+
+.price-btn {
+  display: block; width: 100%;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px; font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.price-btn.primary {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+}
+.price-btn.primary:hover { box-shadow: 0 6px 28px rgba(124,58,237,0.5); transform: translateY(-1px); }
+.price-btn.outline {
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.price-btn.outline:hover { border-color: var(--purple); color: var(--text); }
+
+/* ── TESTIMONIALS ── */
+.testimonials { padding: 80px 20px; background: rgba(124,58,237,0.03); }
+
+.testi-grid {
+  max-width: 900px; margin: 0 auto;
+  display: grid; gap: 16px;
+}
+@media(min-width:600px) { .testi-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width:900px) { .testi-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.testi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.stars { color: #f59e0b; font-size: 13px; margin-bottom: 12px; letter-spacing: 2px; }
+.testi-text { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: 10px; }
+.testi-av {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.testi-name { font-size: 13px; font-weight: 600; }
+.testi-info { font-size: 11px; color: var(--text3); }
+
+/* ── FAQ ── */
+.faq { padding: 80px 20px; }
+.faq-list { max-width: 680px; margin: 0 auto; }
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+.faq-q {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px;
+}
+.faq-q::after { content: '+'; font-size: 20px; color: var(--purple-light); flex-shrink: 0; transition: transform 0.3s; }
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+.faq-a {
+  font-size: 13px; color: var(--text2); line-height: 1.7;
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s;
+}
+.faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+/* ── CTA BOTTOM ── */
+.cta-bottom {
+  padding: 100px 20px;
+  text-align: center;
+}
+.cta-box {
+  max-width: 600px; margin: 0 auto;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.1));
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 28px;
+  padding: 60px 40px;
+  position: relative; overflow: hidden;
+}
+.cta-box::before {
+  content: '';
+  position: absolute; top: -50%; left: -50%; right: -50%; bottom: -50%;
+  background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 60%);
+}
+.cta-box h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 800; margin-bottom: 12px;
+  position: relative;
+}
+.cta-box p {
+  color: var(--text2); font-size: 15px;
+  margin-bottom: 32px; position: relative;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 20px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text3); font-size: 12px;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">🎓</div>
+      <span class="nav-logo-text">Apex<span>Tutor</span></span>
+    </a>
+    <a href="https://app.apextutor.my" class="nav-cta">Cuba Percuma →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    14 Hari Trial — Percuma. Tiada kad kredit diperlukan.
+  </div>
+
+  <h1 class="hero-title">
+    Tutor SPM Terbaik.<br>
+    <span class="highlight">24/7. Dalam Poket Kamu.</span>
+  </h1>
+
+  <p class="hero-sub">
+    AI Tutor peribadi untuk pelajar Tingkatan 4 &amp; 5. Belajar ikut kadar sendiri, dapat feedback serta-merta, dan bersedia untuk SPM dengan lebih yakin.
+  </p>
+
+  <div class="hero-actions">
+    <a href="https://app.apextutor.my" class="btn-primary">
+      🚀 Mula Trial Percuma
+    </a>
+    <a href="#features" class="btn-secondary">
+      Tengok Features ↓
+    </a>
+  </div>
+
+  <div class="hero-trust">
+    <div class="trust-avatars">
+      <div class="trust-av">S</div>
+      <div class="trust-av">A</div>
+      <div class="trust-av">F</div>
+      <div class="trust-av">N</div>
+    </div>
+    <span>Dipercayai pelajar SPM seluruh Malaysia</span>
+  </div>
+
+  <!-- PHONE MOCKUP -->
+  <div class="hero-mockup" style="margin-top:60px">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="phone-header">
+          <div class="phone-header-logo">🎓</div>
+          <div>
+            <div class="phone-header-text">Apex<span>Tutor</span></div>
+            <div style="font-size:7px;color:#4a4860">AI Tutor SPM • Online</div>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="chat-msg ai" style="animation-delay:0.5s">
+            <span class="ai-label">🤖 ApexTutor AI</span>
+            <div class="bubble">Hai Farah! Kita sambung Fizik Bab 3 — Kegravitian. Soalan diagnostik dulu ya?</div>
+          </div>
+          <div class="chat-msg user" style="animation-delay:1s">
+            <div class="bubble">Ok boleh! Nak cuba soalan SPM sebenar</div>
+          </div>
+          <div class="chat-msg ai" style="animation-delay:1.5s">
+            <span class="ai-label">🤖 ApexTutor AI</span>
+            <div class="bubble">Sebuah satelit mengorbit Bumi pada ketinggian 400 km. Jika jisim Bumi = 6×10²⁴ kg, hitung halaju orbital satelit tersebut.</div>
+          </div>
+          <div class="chat-msg ai" style="margin-top:6px;animation-delay:2s">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-bar">
+  <div class="stats-inner">
+    <div class="reveal">
+      <div class="stat-num">9</div>
+      <div class="stat-lbl">Subjek SPM</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-num">24/7</div>
+      <div class="stat-lbl">Sedia Membantu</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-num">6</div>
+      <div class="stat-lbl">Fasa Pembelajaran</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-num">RM49</div>
+      <div class="stat-lbl">Sebulan Sahaja</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Kenapa ApexTutor?</div>
+  <h2 class="section-title">Bukan Sekadar App.<br>Tutor Peribadi Kamu.</h2>
+  <p class="section-sub">Direka khas untuk pelajar SPM Malaysia — faham silibus KPM, cara pemarkahan SPM, dan keperluan kamu.</p>
+
+  <div class="features-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon">🧠</div>
+      <div class="feat-title">AI Yang Faham SPM</div>
+      <div class="feat-desc">Dilatih dengan silibus KPM KSSM T4 &amp; T5. Soalan format SPM sebenar, skema pemarkahan tepat.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🎯</div>
+      <div class="feat-title">Diagnostik Peribadi</div>
+      <div class="feat-desc">AI kenal pasti kelemahan kamu dan buat plan belajar yang sesuai. Bukan satu saiz untuk semua.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">📸</div>
+      <div class="feat-title">Snap &amp; Semak</div>
+      <div class="feat-desc">Ambil gambar jawapan tulisan tangan. AI baca dan bagi markah + feedback dalam saat.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Track Prestasi</div>
+      <div class="feat-desc">Dashboard lengkap — streak, markah, trend, dan topik yang perlu lebih perhatian.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">✨</div>
+      <div class="feat-title">AI Insight Personal</div>
+      <div class="feat-desc">Analisis mendalam setiap minggu. AI bagi cadangan fokus berdasarkan data prestasi sebenar kamu.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🔔</div>
+      <div class="feat-title">Reminder Streak</div>
+      <div class="feat-desc">Notifikasi harian supaya kamu tak putus streak belajar. Konsisten adalah kunci kejayaan SPM.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="howitworks" id="how">
+  <div class="section-label">Cara Guna</div>
+  <h2 class="section-title reveal">3 Langkah Mudah</h2>
+  <p class="section-sub reveal">Mulakan dalam masa 2 minit. Tiada setup yang rumit.</p>
+
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <div class="step-title">Daftar &amp; Setup</div>
+      <div class="step-desc">Masukkan kod akses, pilih tingkatan dan subjek. AI akan kenal pelajar dulu.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <div class="step-title">Belajar dengan AI</div>
+      <div class="step-desc">Chat dengan AI Tutor, snap gambar soalan, jawab kuiz diagnostik SPM sebenar.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <div class="step-title">Track &amp; Improve</div>
+      <div class="step-desc">Tengok prestasi naik setiap sesi. AI adjust cara mengajar ikut progress kamu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBJECTS -->
+<section class="subjects" id="subjects">
+  <div class="section-label">Subjek</div>
+  <h2 class="section-title reveal">9 Subjek SPM Dalam Satu App</h2>
+  <p class="section-sub reveal">Tingkatan 4 &amp; 5, semua ikut silibus KPM KSSM terkini.</p>
+
+  <div class="subj-grid reveal">
+    <div class="subj-chip"><span class="subj-emoji">🔢</span><span class="subj-name">Matematik</span></div>
+    <div class="subj-chip"><span class="subj-emoji">📐</span><span class="subj-name">Mat Tambahan</span></div>
+    <div class="subj-chip"><span class="subj-emoji">📝</span><span class="subj-name">Bah. Melayu</span></div>
+    <div class="subj-chip"><span class="subj-emoji">🌏</span><span class="subj-name">Bah. Inggeris</span></div>
+    <div class="subj-chip"><span class="subj-emoji">⚛️</span><span class="subj-name">Fizik</span></div>
+    <div class="subj-chip"><span class="subj-emoji">🧪</span><span class="subj-name">Kimia</span></div>
+    <div class="subj-chip"><span class="subj-emoji">🧬</span><span class="subj-name">Biologi</span></div>
+    <div class="subj-chip"><span class="subj-emoji">🏛️</span><span class="subj-name">Sejarah</span></div>
+    <div class="subj-chip"><span class="subj-emoji">☪️</span><span class="subj-name">Pend. Islam</span></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-label">Harga</div>
+  <h2 class="section-title reveal">Mudah &amp; Berpatutan</h2>
+  <p class="section-sub reveal">Bandingkan dengan tutor konvensional RM80–150 sejam. ApexTutor 24/7 dalam poket kamu.</p>
+
+  <div class="pricing-grid">
+    <!-- TRIAL -->
+    <div class="price-card reveal">
+      <div class="price-plan">Trial Percuma</div>
+      <div class="price-amount">RM0 <span>/ 14 hari</span></div>
+      <div class="price-desc">Cuba tanpa risiko. Tiada kad kredit.</div>
+      <ul class="price-features">
+        <li>AI Tutor Chat (penuh)</li>
+        <li>1 subjek pilihan</li>
+        <li>Progress tracking basic</li>
+        <li class="muted">AI Insight Personal</li>
+        <li class="muted">Semua 9 subjek</li>
+      </ul>
+      <a href="https://app.apextutor.my" class="price-btn outline">Mula Trial →</a>
+    </div>
+
+    <!-- MONTHLY -->
+    <div class="price-card popular reveal">
+      <div class="popular-badge">⭐ Paling Popular</div>
+      <div class="price-plan">Monthly</div>
+      <div class="price-amount">RM49 <span>/ bulan</span></div>
+      <div class="price-desc">Akses penuh. Batalkan bila-bila masa.</div>
+      <ul class="price-features">
+        <li>AI Tutor Chat (penuh)</li>
+        <li>Semua 9 subjek</li>
+        <li>Progress tracking penuh</li>
+        <li>AI Insight Personal</li>
+        <li>Snap &amp; semak gambar</li>
+      </ul>
+      <a href="https://app.apextutor.my" class="price-btn primary">Langgan Sekarang →</a>
+    </div>
+
+    <!-- ANNUAL -->
+    <div class="price-card reveal">
+      <div class="price-plan">Annual</div>
+      <div class="price-amount">RM500 <span>/ tahun</span></div>
+      <div class="price-desc">Jimat RM88 berbanding monthly.</div>
+      <ul class="price-features">
+        <li>Semua features Monthly</li>
+        <li>Akses penuh setahun SPM</li>
+        <li>Priority support</li>
+        <li>Badge SPM Champion 🏆</li>
+        <li>Terbaik untuk T4 &amp; T5</li>
+      </ul>
+      <a href="https://app.apextutor.my" class="price-btn outline">Langgan Tahunan →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-label">Kata Mereka</div>
+  <h2 class="section-title reveal">Pelajar Suka ApexTutor</h2>
+
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"Serius macam ada tutor peribadi! AI explain step-by-step, lepas tu tanya balik faham ke tak. Markah Fizik naik dari 45% ke 72% dalam sebulan."</p>
+      <div class="testi-author">
+        <div class="testi-av">S</div>
+        <div>
+          <div class="testi-name">Saif</div>
+          <div class="testi-info">Tingkatan 5 • SPM 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"Boleh snap gambar kerja sekolah, terus AI check dan cakap mana silap. Jimat masa sangat! Anak saya dah tak tunggu-tunggu nak tanya cikgu."</p>
+      <div class="testi-author">
+        <div class="testi-av">R</div>
+        <div>
+          <div class="testi-name">Rohana</div>
+          <div class="testi-info">Ibu kepada pelajar T4</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"Suka sebab AI ingat topik mana lemah. Tiap sesi dia focus kat situ dulu. Lagi berkesan dari study sendiri-sendiri."</p>
+      <div class="testi-author">
+        <div class="testi-av">A</div>
+        <div>
+          <div class="testi-name">Amira</div>
+          <div class="testi-info">Tingkatan 4 • KL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title reveal">Soalan Lazim</h2>
+
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Adakah ApexTutor sesuai untuk semua pelajar SPM?</div>
+      <div class="faq-a">Ya! ApexTutor direka khas untuk pelajar Tingkatan 4 dan Tingkatan 5 dengan silibus KPM KSSM 2019/2020. Soalan dan pengajaran ikut format SPM sebenar.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Bagaimana trial percuma berfungsi?</div>
+      <div class="faq-a">Daftar dengan kod akses, pilih 1 subjek, dan guna AI Tutor penuh selama 14 hari — percuma! Tiada kad kredit diperlukan. Upgrade bila dah ready untuk akses semua 9 subjek.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Boleh guna tanpa internet?</div>
+      <div class="faq-a">ApexTutor memerlukan sambungan internet untuk fungsi AI. Tapi ia boleh install sebagai PWA (Progressive Web App) pada telefon kamu untuk akses lebih mudah.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Berapa kos berbanding tutor biasa?</div>
+      <div class="faq-a">Tutor konvensional biasanya RM80–150 sejam. ApexTutor RM49 sebulan — unlimited sesi, 24/7, semua 9 subjek. Nilai yang jauh lebih baik untuk persediaan SPM menyeluruh.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Boleh batalkan subscription bila-bila masa?</div>
+      <div class="faq-a">Ya, Abang Mate boleh batalkan bila-bila masa. Akses akan kekal hingga hujung tempoh yang dibayar.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BOTTOM -->
+<section class="cta-bottom">
+  <div class="cta-box reveal">
+    <h2>SPM Dah Dekat.<br>Jangan Tunggu Lagi.</h2>
+    <p>Mulakan trial percuma 14 hari hari ini. Tiada risiko, tiada kad kredit.</p>
+    <a href="https://app.apextutor.my" class="btn-primary" style="display:inline-flex">
+      🚀 Mula Sekarang — Percuma
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">
+    Apex<span style="color:var(--purple-light)">Tutor</span>
+  </div>
+  <p>AI Tutor SPM Malaysia · <a href="https://app.apextutor.my" style="color:var(--purple-light);text-decoration:none">app.apextutor.my</a></p>
+  <p style="margin-top:8px">© 2026 ApexTutor · support@apextutor.my</p>
+</footer>
+
+<script>
+// FAQ Toggle
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i) { i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+
+// Scroll Reveal
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(function(el) {
+  observer.observe(el);
+});
+
+// Stagger reveal for grids
+document.querySelectorAll('.features-grid .feat-card, .pricing-grid .price-card, .testi-grid .testi-card').forEach(function(el, i) {
+  el.style.transitionDelay = (i * 0.08) + 's';
+});
+</script>
+</body>
+</html>
